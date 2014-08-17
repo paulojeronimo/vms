@@ -1,0 +1,5 @@
+OS_TYPE=RedHat
+MIRROR=${MIRROR:-CentOS-6.5-i386}
+VM=${VM:-$MIRROR.minimo}
+VM_NAME=${VM_NAME:-vm-centos}
+ISO=${ISO:-$MIRRORS_DIR/$MIRROR/isos/i386/$MIRROR-netinstall.iso}

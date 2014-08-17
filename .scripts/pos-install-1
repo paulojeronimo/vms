@@ -1,0 +1,33 @@
+#!/bin/bash
+# Author: Paulo Jerônimo (@paulojeronimo, pj@paulojeronimo.info)
+
+THIS_DIR=`cd $(dirname "$0"); echo -n $PWD`
+source "$THIS_DIR/config"
+
+echo "mandando a $VM_NAME parar"
+#VBoxManage controlvm $VM_NAME acpipowerbutton
+VBoxManage controlvm $VM_NAME poweroff
+
+echo -n "aguardando até a $VM_NAME parar ... "
+while true; do VBoxManage list runningvms | grep -q $VM_NAME && sleep 1 || break; done
+echo ok
+
+echo "removendo o CD de instalação"
+VBoxManage storageattach $VM_NAME --storagectl "IDE Controller" --port 1 --device 0 --type dvddrive --medium emptydrive
+
+echo "reiniciando a $VM_NAME"
+VBoxManage startvm $VM_NAME
+
+cat <<'EOF'
+
+Aguarde a VM ser iniciada ...
+Logue-se como aluno (senha @alun0123) e execute os seguintes comandos:
+
+sudo package-cleanup -y --oldkernels --count=1
+d=/var/cache/yum/; sudo bash -c "rm -rf $d; mkdir -p $d"
+history -c
+
+Em seguida, volte para a máquina HOST (a que está executando o VirtualBox) e execute neste diretório:
+
+./pos-install-2
+EOF

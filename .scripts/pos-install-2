@@ -1,0 +1,35 @@
+#!/bin/bash
+# Author: Paulo Jerônimo (@paulojeronimo, pj@paulojeronimo.info)
+
+THIS_DIR=`cd $(dirname $0); echo -n $PWD`
+source "$THIS_DIR/config"
+
+case `uname` in
+   Linux) shasum=sha1sum;;
+   Darwin) shasum=shasum;;
+esac
+
+echo "enviando comando para a $VM_NAME parar"
+VBoxManage controlvm $VM_NAME acpipowerbutton
+
+echo -n "aguardando até a $VM_NAME parar ... "
+while true; do VBoxManage list runningvms | grep -q $VM_NAME && sleep 1 || break; done
+echo ok
+
+echo "desregistrando a $VM_NAME"
+VBoxManage unregistervm $VM_NAME
+
+cd ~/VirtualBox\ VMs
+
+echo "compactando a $VM_NAME"
+cd $VM_NAME
+find . ! \( -name . -o -name $VM_NAME.vbox -o -name $VM_NAME.vdi \) | xargs rm -rf
+cd - &> /dev/null
+rm -rf $VM_NAME.*
+7za a -mmt -v200m $VM_NAME $VM_NAME/
+
+echo "gerando o sha1sum dos arquivos compactados"
+$shasum $VM_NAME.7z.* > $VM_NAME.sha1sum
+
+echo "gerando o script para o download da $VM_NAME"
+f=$VM_NAME.download.sh; sed "s/COUNT/`ls $VM_NAME.7z.* | wc -l | tr -d ' '`/g" "$THIS_DIR"/$f > $f

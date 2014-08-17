@@ -1,0 +1,86 @@
+#!/bin/bash
+# Author: Paulo Jerônimo (@paulojeronimo, pj@paulojeronimo.info)
+
+THIS_DIR=`cd $(dirname "$0"); echo -n $PWD`
+source "$THIS_DIR"/config.apache
+source "$THIS_DIR"/config
+
+# as configurações default são para a vm-fedora:
+MEMORY_SIZE=${MEMORY_SIZE:-1024}
+HD_SIZE=${HD_SIZE:-8192}
+VM_BASEFOLDER=${VM_BASEFOLDER:-~/VirtualBox VMs}
+VM_NAME=${VM_NAME:-vm-fedora}
+VM_DIR=$VM_BASEFOLDER/$VM_NAME
+ISO=${ISO:-$MIRRORS_DIR/$MIRROR/releases/20/Fedora/x86_64/iso/Fedora-20-x86_64-netinst.iso}
+
+case `uname` in
+  Darwin)
+    VBOXGUESTADDITIONS_ISO=${VBOXGUESTADDITIONS_ISO:-/Applications/VirtualBox.app/Contents/MacOS/VBoxGuestAdditions.iso}
+    ;;
+  Linux)
+    VBOXGUESTADDITIONS_ISO=${VBOXGUESTADDITIONS_ISO:-/usr/share/virtualbox/VBoxGuestAdditions.iso}
+    ;;
+  *)
+    echo "Esse script ainda não está configurado para \"`uname`\"!"
+    exit 1
+    ;;
+esac
+
+_createvm() {
+   [ -f "$ISO" ] || { echo "O arquivo \"$ISO\" não foi localizado!"; exit 1; }
+
+   VBoxManage createvm --name $VM_NAME --ostype $OS_TYPE --register
+   VBoxManage modifyvm $VM_NAME --memory $MEMORY_SIZE --clipboard bidirectional --accelerate3d on
+   VBoxManage createhd --filename "$VM_DIR/$VM_NAME.vdi" --size $HD_SIZE --format VDI
+   VBoxManage storagectl $VM_NAME --name "SATA Controller" --add sata --controller IntelAhci
+   VBoxManage storageattach $VM_NAME --storagectl "SATA Controller" --port 0 --device 0 --type hdd --medium "$VM_DIR/$VM_NAME.vdi"
+   VBoxManage storagectl $VM_NAME --name "IDE Controller" --add ide --controller PIIX4
+   VBoxManage storageattach $VM_NAME --storagectl "IDE Controller" --port 1 --device 0 --type dvddrive --medium "$ISO"
+#   VBoxManage storageattach $VM_NAME --storagectl "IDE Controller" --port 1 --device 1 --type dvddrive --medium "$VBOXGUESTADDITIONS_ISO"
+}
+
+_installvm() {
+   _startvm
+   echo "Durante o boot da $VM_NAME, pressione <Tab> e acrescente na linha de incialização:"
+   echo "ks=http://10.0.2.2/$VM/ks"
+}
+
+_registervm() {
+   VBoxManage registervm "$VM_DIR/$VM_NAME.vbox"
+}
+
+_startvm() {
+   VBoxManage startvm $VM_NAME
+}
+
+_acpipowerbutton() {
+   VBoxManage controlvm $VM_NAME acpipowerbutton
+}
+
+_unregistervm() {
+   VBoxManage unregistervm $VM_NAME
+}
+
+_deletevm() {
+   VBoxManage unregistervm $VM_NAME --delete
+   rm -rf "$VM_DIR"
+}
+
+_extractvm() {
+   pushd "$VM_BASEFOLDER" &> /dev/null
+   7za x $VM_NAME.7z.001
+   popd &> /dev/null
+}
+
+OP=$1
+if ! [ "$OP" ]
+then
+   echo "Especifique a operação!"
+elif ! type _$OP &> /dev/null
+then
+   echo "A operação \"$OP\" não existe!"
+else
+   _$OP
+   exit $?
+fi
+exit 1

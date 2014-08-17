@@ -1,0 +1,63 @@
+= Resumo
+
+Este projeto contém scripts que desenvolvi para criar e disponibilizar máquinas virtuais (VMs) que utilizo nos laboratórios e cursos que escrevo. Exemplos dessas VM (exporadicamente atualizadas) estão em:
+
+. http://gdriv.es/vm-fedora
+. http://gdriv.es/vm-centos
+
+Eu faço a criação dessas VMs utilizando qualquer um dos sistemas operacionais que tenho instalado em meu Mac: OS X ou o Fedora. A princípio, eu estou criando VMs utilizando o http://virtualbox.org[VirtualBox] e, se você deseja saber como eu faço sua intalação no Fedora, leia a dica https://github.com/paulojeronimo/dicas-linux/blob/master/instalacao-virtualbox.adoc["Instalação do VirtualBox 4.3 (Fedora)"].
+
+Para fazer a criação dessas VMs eu desenvolvi arquivos de http://fedoraproject.org/wiki/Anaconda/Kickstart[kickstart] que fazem uso de um mirror local de uma distribuição específica. Então, como pré-requisito, para gerar as VMs de acordo com esses scripts, você também deverá realizar o mirror da distribuição que será utilizada na criação da VM. Uma forma simples de fazer esse mirror é baixar e utilizar, também, o meu http://github.com/paulojeronimo/mirrors[projeto mirrors]. 
+
+Os mirrors que faço são acessíveis, localmente em minha máquina, através de HTTP. Então, eu instalo e configuro o http://httpd.apache.org/[Apache HTTPD], nos sistemas operacionais que utilizo. Para saber como eu configuro o Apache no Fedora, leia a dica https://github.com/paulojeronimo/dicas-linux/blob/master/instalacao-httpd.adoc["Instalação do Apache HTTPD (Fedora)"]. No OS X, eu faço sua instalação seguindo os passos que escrevi em http://blog.ladoservidor.com/2013/01/web-sharing-no-os-x-mountain-lion.html["Web Sharing no OS X Mountain Lion"].
+
+== Exemplo: criando uma uma VM Fedora 20 (x86_64) mínima
+
+Em primeiro lugar, crie seu mirror do Fedora para a versão 20 e plataforma x86_64 (dica: utilize meu http://github.com/paulojeronimo/mirrors/[projeto mirrors]). _Se você não quizer fazer isso (por exemplo, pelo fato dele ocupar muito espaço no disco (+aproximadamente 80G, da forma como eu baixo+)) você precisará ajustar o link:./Fedora-20-x86_64.minimo/arquivos/ks[arquivo kickstart] que desenvolvi e fazer uso de algum mirror público. Além disso, precisar baixar ao menos o arquivo https://dl.fedoraproject.org/pub/fedora/linux/releases/20/Fedora/x86_64/iso/Fedora-20-x86_64-netinst.iso[Fedora-20-x86_64-netinst.iso] e ajustar sua localização na variável de ambiente +ISO+ (utilizada pelo script +virtualbox+)_.
+. 
+
+Configure as variáveis que informam a localização de teus mirrors e diretórios do Apache. Como exemplo, forneço o meu o meu arquivo de configuração. Edite-o conforme o teu ambiente:
+[source,bash]
+----
+vim config.apache
+----
+
+Em seguida, vá para o diretório da VM:
+[source,bash]
+----
+cd Fedora-20-x86_64.minimo/
+----
+
+Nesse ponto, você já deverá ter realizado a instalação do Apache instalado em tua máquina. Então, siga executando o comando a seguir. Ele configurará o Apache para ser possível a criação da VM:
+[source,bash]
+----
+./configurar-apache
+----
+
+Para prosseguir, você já deverá ter realizado a instalação do VirtualBox. Então, execute os comandos a seguir para criar a VM:
+[source,bash]
+----
+./virtualbox createvm
+----
+
+O script link:./.scripts/virtualbox[virtualbox] faz uso de um arquivo de configuração específico para a VM que está sendo criada (link:./Fedora-20-x86_64.minimo/config[config]). _Cada VM desse projeto possui suas próprias configurações descritas nesse arquivo. Observe-o caso esteja realizado adaptações (ou criando uma nova VM) para o teu ambiente._
+
+Todo o procedimento de instalação do Fedora na VM será automático. Para iniciá-lo, execute:
+[source,bash]
+----
+./virtualbox installvm
+----
+
+Será dado o boot na VM e a instalação do Fedora começará. *IMPORTANTE*: como opção para o boot, acrescente +ks=http://10.0.2.2/Fedora-20-x86_64.minimo/ks+. Para isso, pressione +Tab+ ao ver a tela de opções de boot. Em seguida, pressione +Enter+ que o processo de instalação continuará através das instruções programadas no arquivo +ks+.
+
+Aguarde a instalação! Ela terminará quando você ler a seguinte mensagem na console da VM: "Installation complete.  Press return to quit".
+
+Para prosseguir, sem desligar a VM, observe e siga as instruções passadas na execução do seguinte comando:
+[source,bash]
+----
+./pos-install-1
+----
+
+Ao final de todo o processo de construção da VM, ela deverá estar disponível no diretório +~/VirtualBox VMs+.
+
+Boa sorte! =)

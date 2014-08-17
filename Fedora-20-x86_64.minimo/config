@@ -1,0 +1,5 @@
+OS_TYPE=Fedora_64
+MIRROR=${MIRROR:-Fedora-20-x86_64}
+VM=${VM:-$MIRROR.minimo}
+VM_NAME=${VM_NAME:-vm-fedora}
+ISO=${ISO:-$MIRRORS_DIR/$MIRROR/releases/20/Fedora/x86_64/iso/$MIRROR-netinst.iso}

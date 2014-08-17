@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# diretório contendo meus mirrors
+MIRRORS_DIR=/data/mirrors
+
+# configurações do Apache, específicas para Fedora (20) instalado em meu Mac
+Linux() {
+
+   # localização dos arquivos de configuração do Apache
+   APACHE_CONF_DIR=/etc/httpd/conf.d
+
+   # localização da pasta de documentos públicos do Apache
+   APACHE_PUBLIC_DIR=/var/httpd/www
+
+   # comando para fazer o reload das configurações do Apache
+   APACHE_RELOAD_CMD="systemctl reload httpd"
+}
+
+# configurações do Apache, específicas para o OS X (10.9.4) instalado em meu Mac
+Darwin() {
+
+   # localização dos arquivos de configuração do Apache
+   APACHE_CONF_DIR=/etc/apache2/other
+
+   # localização da pasta de documentos públicos do Apache
+   APACHE_PUBLIC_DIR=/Library/WebServer/Documents
+
+   # comando para fazer o reload das configurações do Apache
+   APACHE_RELOAD_CMD="apachectl restart"
+}
+
+# carrega as configurações específicas para o S.O.
+`uname`

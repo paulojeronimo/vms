@@ -1,0 +1,44 @@
+#!/bin/bash
+# Author: Paulo Jerônimo (@paulojeronimo, pj@paulojeronimo.info)
+
+THIS_DIR=`cd $(dirname "$0"); echo -n $PWD`
+source "$THIS_DIR"/config.apache
+
+verifica_var() {
+    local nome_var=$1
+    local var=${!nome_var}
+    [ "$var" ] || echo "A variável \"$nome_var\" não está configurada!"
+}
+
+CONFIG=$THIS_DIR/config
+if [ -r "$CONFIG" ]
+then
+   source "$CONFIG"
+else
+   echo "O arquivo \"$CONFIG\" não foi encontrado!"
+   exit 1
+fi
+
+verifica_var VM || exit 1
+verifica_var MIRRORS_DIR || exit 1
+verifica_var MIRROR || exit 1
+verifica_var APACHE_CONF_DIR || exit 1
+verifica_var APACHE_RELOAD_CMD || exit 1
+
+VM_DIR=$THIS_DIR/arquivos
+VM_CONF=/tmp/$VM.conf
+
+cat > $VM_CONF <<EOF
+Alias /$MIRROR/   "$MIRRORS_DIR/$MIRROR/"
+Alias /$VM/       "$APACHE_PUBLIC_DIR/$VM/"
+
+<Directory "$MIRRORS_DIR/$MIRROR">
+  Options Indexes MultiViews
+  Order allow,deny
+  Allow from all
+</Directory>
+EOF
+
+sudo cp $VM_CONF $APACHE_CONF_DIR/
+sudo rsync -r --copy-links --update --delete "$VM_DIR"/ $APACHE_PUBLIC_DIR/$VM/
+sudo $APACHE_RELOAD_CMD
