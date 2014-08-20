@@ -11,9 +11,11 @@ Para fazer a criação dessas VMs eu desenvolvi arquivos de http://fedoraproject
 
 Os mirrors que faço são acessíveis, localmente em minha máquina, através de HTTP. Então, eu instalo e configuro o http://httpd.apache.org/[Apache HTTPD], nos sistemas operacionais que utilizo. Para saber como eu configuro o Apache no Fedora, leia a dica https://github.com/paulojeronimo/dicas-linux/blob/master/instalacao-httpd.adoc["Instalação do Apache HTTPD (Fedora)"]. No OS X, eu faço sua instalação seguindo os passos que escrevi em http://blog.ladoservidor.com/2013/01/web-sharing-no-os-x-mountain-lion.html["Web Sharing no OS X Mountain Lion"].
 
+Como um dos últimos passos na criação de minhas VMs eu faço sua compactação, em volumes de até 200MB cada, através do uso do http://www.7-zip.org[7zip]. Então, você também precisará desse utilitário instalado em teu ambiente.
+
 == Exemplo: criando uma uma VM Fedora 20 (x86_64) mínima
 
-Em primeiro lugar, crie seu mirror do Fedora para a versão 20 e plataforma x86_64 (dica: utilize meu http://github.com/paulojeronimo/mirrors/[projeto mirrors]). _Se você não quizer fazer isso (por exemplo, pelo fato dele ocupar muito espaço no disco (+aproximadamente 80G, da forma como eu baixo+)) você precisará ajustar o link:./Fedora-20-x86_64.minimo/arquivos/ks[arquivo kickstart] que desenvolvi e fazer uso de algum mirror público. Além disso, precisar baixar ao menos o arquivo https://dl.fedoraproject.org/pub/fedora/linux/releases/20/Fedora/x86_64/iso/Fedora-20-x86_64-netinst.iso[Fedora-20-x86_64-netinst.iso] e ajustar sua localização na variável de ambiente +ISO+ (utilizada pelo script +virtualbox+)_.
+Em primeiro lugar, crie seu mirror do Fedora para a versão 20 e plataforma x86_64 (dica: utilize meu http://github.com/paulojeronimo/mirrors/[projeto mirrors]). _Se você não quizer fazer isso (por exemplo, pelo fato dele ocupar muito espaço no disco (+aproximadamente 80G, da forma como eu faço o seu download+)) você precisará ajustar o link:./Fedora-20-x86_64.minimo/arquivos/ks[arquivo kickstart] que desenvolvi e fazer uso de algum mirror público. Além disso, precisar baixar ao menos o arquivo https://dl.fedoraproject.org/pub/fedora/linux/releases/20/Fedora/x86_64/iso/Fedora-20-x86_64-netinst.iso[Fedora-20-x86_64-netinst.iso] e ajustar sua localização na variável de ambiente +ISO+ (utilizada pelo script +virtualbox+)_.
 . 
 
 Configure as variáveis que informam a localização de teus mirrors e diretórios do Apache. Como exemplo, forneço o meu o meu arquivo de configuração. Edite-o conforme o teu ambiente:
@@ -34,6 +36,8 @@ Nesse ponto, você já deverá ter realizado a instalação do Apache instalado 
 ./configurar-apache
 ----
 
+O resultado esperado após a execução desse comando é que as seguintes URLs deverão estar acessíveis: http://localhost/Fedora-20-x86_64/ e http://localhost/Fedora-20-x86_64.minimo/. A primeira aponta para o mirror local do Fedora 20 e a segunda será utilizada pelo https://fedoraproject.org/wiki/Anaconda[Anaconda] (programa que lê e interpreta o arquivo https://fedoraproject.org/wiki/Anaconda/Kickstart[kickstart]) para configurar a VM.
+
 Para prosseguir, você já deverá ter realizado a instalação do VirtualBox. Então, execute os comandos a seguir para criar a VM:
 [source,bash]
 ----
@@ -52,12 +56,25 @@ Será dado o boot na VM e a instalação do Fedora começará. *IMPORTANTE*: com
 
 Aguarde a instalação! Ela terminará quando você ler a seguinte mensagem na console da VM: "Installation complete.  Press return to quit".
 
-Para prosseguir, sem desligar a VM, observe e siga as instruções passadas na execução do seguinte comando:
+Para prosseguir, sem desligar a VM, execute:
 [source,bash]
 ----
 ./pos-install-1
 ----
 
-Ao final de todo o processo de construção da VM, ela deverá estar disponível no diretório +~/VirtualBox VMs+.
+Esse comando reiniciará a VM e pedirá que você execute alguns procedimentos dentro dela. Após executá-los, prossiga com o seguinte comando:
+[source,bash]
+----
+./pos-install-2
+----
 
-Boa sorte! =)
+Esse último script é responsável por:
+
+. Encerrar a execução da VM;
+. Remover o registro da VM no VirtualBox;
+. Compactar a VM em volumes, utilizando o http://www.7-zip.org/[7zip];
+. Gerar o script de download da VM, baseando-se na quantidade de volumes gerados na compactação;
+
+Ao final de todo o processo de construção da VM, ela deverá estar disponível no diretório +~/VirtualBox VMs/vm-fedora+. Os arquivos +~/VirtualBox VMs/vm-fedora.*+ podem ser disponibilizados em qualquer servidor HTTP público mas, se você quiser utilizar o script link:./Fedora-20-x86_64.minimo/vm-fedora.download.sh[vm-fedora.download.sh] em teu próprio ambiente, você deverá configurá-lo (ajustando a variável +host+) antes de executar o script +pos-install-2+.
+
+Boa diversão na geração de tua VM! =)

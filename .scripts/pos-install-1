@@ -23,11 +23,16 @@ cat <<'EOF'
 Aguarde a VM ser iniciada ...
 Logue-se como aluno (senha @alun0123) e execute os seguintes comandos:
 
+# se precisar configurar seu teclado para um padrão brasileiro, execute:
+sudo loadkeys br-abnt2
+
+# remova os kernels antigos, limpe o cache de pacotes e o histórico de comandos:
 sudo package-cleanup -y --oldkernels --count=1
 d=/var/cache/yum/; sudo bash -c "rm -rf $d; mkdir -p $d"
-history -c
+history 
+# ------------------------------------------------------------------------------
 
-Em seguida, volte para a máquina HOST (a que está executando o VirtualBox) e execute neste diretório:
+Agora, volte para a máquina HOST (a que está executando o VirtualBox) e execute:
 
 ./pos-install-2
 EOF
