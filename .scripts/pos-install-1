@@ -29,7 +29,7 @@ sudo loadkeys br-abnt2
 # remova os kernels antigos, limpe o cache de pacotes e o histórico de comandos:
 sudo package-cleanup -y --oldkernels --count=1
 d=/var/cache/yum/; sudo bash -c "rm -rf $d; mkdir -p $d"
-history 
+history -c
 # ------------------------------------------------------------------------------
 
 Agora, volte para a máquina HOST (a que está executando o VirtualBox) e execute:
