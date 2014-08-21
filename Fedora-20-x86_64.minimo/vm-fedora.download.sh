@@ -1,8 +1,8 @@
 #!/bin/bash
-# Author: Paulo Jerônimo (@paulojeronimo, pj@paulojeronimo)
+# Author: Paulo Jerônimo (@paulojeronimo, pj@paulojeronimo.info)
 #
-# Faz o download e verifica o SHA1SUM dos arquivos baixados
-# Uso comum: $ bash <(http://j.mp/vm-fedora-download)
+# Faz o download e verifica o SHA1SUM dos arquivos baixados. Uso:
+# $ bash <(curl -L http://j.mp/vm-fedora-download)
 
 host=https://googledrive.com/host/0B_tTlCk55SmjZGlNckhCRldUUDQ
 
