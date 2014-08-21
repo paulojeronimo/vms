@@ -5,8 +5,12 @@ THIS_DIR=`cd $(dirname "$0"); echo -n $PWD`
 source "$THIS_DIR/config"
 
 echo "mandando a $VM_NAME parar"
-#VBoxManage controlvm $VM_NAME acpipowerbutton
-VBoxManage controlvm $VM_NAME poweroff
+
+case $OS_TYPE in
+   RedHat) VBoxManage controlvm $VM_NAME poweroff;;
+   Fedora*) VBoxManage controlvm $VM_NAME acpipowerbutton;;
+   *) echo "Tipo \"$OS_TYPE\" não está configurado!"; exit 1;;
+esac
 
 echo -n "aguardando até a $VM_NAME parar ... "
 while true; do VBoxManage list runningvms | grep -q $VM_NAME && sleep 1 || break; done

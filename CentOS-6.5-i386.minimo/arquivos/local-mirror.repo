@@ -1,7 +1,7 @@
 [local-mirror-base]
 name=Local CentOS $releasever - $basearch
 failovermethod=priority
-baseurl=http://base/CentOS-$releasever-$basearch/os/$basearch/
+baseurl=http://base/CentOS-6.5-$basearch/os/$basearch/
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
 enabled=1
@@ -11,7 +11,7 @@ proxy=_none_
 [local-mirror-updates]
 name=Local CentOS $releasever - $basearch - Updates
 failovermethod=priority
-baseurl=http://base/CentOS-$releasever-$basearch/updates/$basearch/
+baseurl=http://base/CentOS-6.5-$basearch/updates/$basearch/
 enabled=1
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6

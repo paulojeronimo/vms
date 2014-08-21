@@ -134,6 +134,11 @@ EOF
 chown aluno: $f
 chmod +x $f
 
+# Copia o script de configuração do proxy
+d=/usr/local/bin; mkdir -p $d
+f=configurar-proxy; curl http://base/CentOS-6.5-i386.minimo/$f > $d/$f
+chmod +x $d/$f
+
 # Volta para o Anaconda, no primeiro console.
 chvt 1
 exec < /dev/tty1 > /dev/tty1 2> /dev/tty1

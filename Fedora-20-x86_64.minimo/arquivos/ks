@@ -74,17 +74,15 @@ vm-fedora
 EOF
 
 # Copia o script de configuração do proxy para o diretório ~aluno/.local/bin
-d=/home/aluno/.local/bin; mkdir -p $d
+d=/usr/local/bin; mkdir -p $d
 f=configurar-proxy; curl http://base/Fedora-20-x86_64.minimo/$f > $d/$f
 chmod +x $d/$f
-chown -R aluno: $d
 
 # Adiciona o repositório para os pacotes do mirror local
 yum-config-manager --add-repo http://base/Fedora-20-x86_64.minimo/local-mirror.repo
 
 # Desabilita (temporariamente, para o update ser feito localmente) os repoisórios remotos
-yum-config-manager --disable fedora
-yum-config-manager --disable updates
+yum-config-manager --disable fedora,updates
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=1003091
 ln -s /etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-20-primary /etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-x86_64
@@ -93,8 +91,7 @@ ln -s /etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-20-primary /etc/pki/rpm-gpg/RPM-GPG-KE
 yum -y update
 
 # Reabilita os repositórios remotos
-yum-config-manager --enable fedora
-yum-config-manager --enable updates
+yum-config-manager --enable fedora,updates
 
 # Desabilita o repositório local
 yum-config-manager --disable local-mirror-\*
