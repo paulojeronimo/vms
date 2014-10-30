@@ -1,0 +1,32 @@
+= vm-fedora
+Paulo Jerônimo
+
+== Colocando em execução com apenas algumas linhas de comando
+
+Essa máquina virtual (VM) pode ser baixada, verificada e instalada, *de forma automática*, caso você esteja num shell Bash sendo executado no Linux, no OS X, ou no Cygwin. Para isso, você precisa já ter instalado o http://7-zip.org[7zip] e o http://virtualbox.org[VirtualBox]. Em seguida, execute:
+
+[source,bash]
+----
+cd ~/VirtualBox\ VMs
+bash <(curl -sSL http://j.mp/vm-fedora-download)
+----
+
+Esse comando fará o download, o checksum dos arquivos baixados e a sua extração utilizando o script link:vm-fedora.download.sh[]. A partir desse ponto você pode registrar a VM com o seguinte comando:
+
+[source,bash]
+----
+VBoxManage registervm "$PWD/vm-fedora/vm-fedora.vbox"
+----
+
+Finalmente, para iniciar essa VM, execute:
+
+[source,bash]
+----
+VBoxManage startvm vm-fedora
+----
+
+That's all! =)
+
+Se tiver interesse em saber como essa vm é criada, veja o proejto http://github.com/paulojeronimo/vms/
+
+// vim: set syntax=asciidoc:

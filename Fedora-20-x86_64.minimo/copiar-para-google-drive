@@ -1,0 +1,9 @@
+#!/bin/bash
+# Author: Paulo Jerônimo (@paulojeronimo, pj@paulojeronimo.info)
+
+d=~/Google\ Drive/vm-fedora
+
+rm -rf "$d"/*
+
+asciidoctor -o "$d"/README.html README.adoc
+cp ~/VirtualBox\ VMs/vm-fedora.* "$d"/

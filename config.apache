@@ -16,7 +16,7 @@ Linux() {
    APACHE_RELOAD_CMD=${APACHE_RELOAD_CMD:-'systemctl reload httpd'}
 }
 
-# configurações específicas para o OS X (10.9.4)
+# configurações específicas para o OS X (10.9.x)
 Darwin() {
 
    # diretório contendo os mirrors

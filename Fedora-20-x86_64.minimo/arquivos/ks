@@ -58,9 +58,13 @@ set -x
 # Ajusta o arquivo /etc/sudoers para permitir que
 #   o grupo wheel não precise informar senha ao usar o sudo
 #   (o usuário aluno pertence a este grupo)
+#
+#   também comenta a linha 'Defaults requiretty'
+#   (http://unix.stackexchange.com/questions/122616/why-do-i-need-a-tty-to-run-sudo-if-i-can-sudo-without-a-password)
 sed -i '
   s/^\(%wheel.*ALL\)/#\1/
   s/^# \(%wheel.*NOPASSWD.*\)/\1/
+  s/^\(Defaults.*requiretty\)/#\1/
 ' /etc/sudoers
 
 # Modifica o /etc/hosts adicionando a localização de hosts
@@ -73,10 +77,13 @@ cat > /etc/hostname <<EOF
 vm-fedora
 EOF
 
-# Copia o script de configuração do proxy para o diretório ~aluno/.local/bin
+# Copia scripts para /usr/local/bin
 d=/usr/local/bin; mkdir -p $d
-f=configurar-proxy; curl http://base/Fedora-20-x86_64.minimo/$f > $d/$f
-chmod +x $d/$f
+for f in configurar-proxy usar-local-mirror configurar-vm-apos-instalacao
+do
+    curl http://base/Fedora-20-x86_64.minimo/$f > $d/$f
+    chmod +x $d/$f
+done
 
 # Adiciona o repositório para os pacotes do mirror local
 yum-config-manager --add-repo http://base/Fedora-20-x86_64.minimo/local-mirror.repo
@@ -101,4 +108,10 @@ yum-config-manager --disable local-mirror-\*
 # Pacotes (e grupos de pacotes) que devem ser instalados
 %packages
 yum-utils
+
+# pacotes utilizados na instalação do VirtualBox Guest Additions
+kernel-devel
+dkms
+bzip2
+gcc-c++
 %end

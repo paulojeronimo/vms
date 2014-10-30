@@ -1,0 +1,8 @@
+#!/bin/bash
+
+OP=${1:-true}
+ENABLE=`$OP && echo -n '--enable' || echo -n '--disable'` 
+DISABLE=`$OP && echo -n '--disable' || echo -n '--enable'` 
+
+sudo yum-config-manager $ENABLE local-mirror-\* > /dev/null
+sudo yum-config-manager $DISABLE fedora,updates > /dev/null

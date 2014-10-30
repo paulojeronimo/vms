@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# remove kernels antigos
+sudo package-cleanup -y --oldkernels --count=1
+
+# instala o VirtualBox Guest Additions
+sudo mount /dev/sr0 /mnt
+cd /mnt
+sudo ./VBoxLinuxAdditions.run
+cd
+sudo umount /dev/sr0
+
+# remove o cache de pacotes
+d=/var/cache/yum/; sudo bash -c "rm -rf $d; mkdir -p $d"

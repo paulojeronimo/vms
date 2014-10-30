@@ -16,6 +16,9 @@ echo -n "aguardando até a $VM_NAME parar ... "
 while true; do VBoxManage list runningvms | grep -q $VM_NAME && sleep 1 || break; done
 echo ok
 
+echo "removendo o cdrom do VirtualBox Guest Additions"
+VBoxManage storageattach $VM_NAME --storagectl "IDE Controller" --port 1 --device 0 --type dvddrive --medium emptydrive
+
 echo "desregistrando a $VM_NAME"
 VBoxManage unregistervm $VM_NAME
 

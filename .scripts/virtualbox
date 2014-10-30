@@ -7,24 +7,11 @@ source "$THIS_DIR"/config
 
 # as configurações default são para a vm-fedora:
 MEMORY_SIZE=${MEMORY_SIZE:-1024}
-HD_SIZE=${HD_SIZE:-8192}
+HD_SIZE=${HD_SIZE:-32768}
 VM_BASEFOLDER=${VM_BASEFOLDER:-~/VirtualBox VMs}
 VM_NAME=${VM_NAME:-vm-fedora}
 VM_DIR=$VM_BASEFOLDER/$VM_NAME
 ISO=${ISO:-$MIRRORS_DIR/$MIRROR/releases/20/Fedora/x86_64/iso/Fedora-20-x86_64-netinst.iso}
-
-case `uname` in
-  Darwin)
-    VBOXGUESTADDITIONS_ISO=${VBOXGUESTADDITIONS_ISO:-/Applications/VirtualBox.app/Contents/MacOS/VBoxGuestAdditions.iso}
-    ;;
-  Linux)
-    VBOXGUESTADDITIONS_ISO=${VBOXGUESTADDITIONS_ISO:-/usr/share/virtualbox/VBoxGuestAdditions.iso}
-    ;;
-  *)
-    echo "Esse script ainda não está configurado para \"`uname`\"!"
-    exit 1
-    ;;
-esac
 
 _createvm() {
    [ -f "$ISO" ] || { echo "O arquivo \"$ISO\" não foi localizado!"; exit 1; }
@@ -36,7 +23,6 @@ _createvm() {
    VBoxManage storageattach $VM_NAME --storagectl "SATA Controller" --port 0 --device 0 --type hdd --medium "$VM_DIR/$VM_NAME.vdi"
    VBoxManage storagectl $VM_NAME --name "IDE Controller" --add ide --controller PIIX4
    VBoxManage storageattach $VM_NAME --storagectl "IDE Controller" --port 1 --device 0 --type dvddrive --medium "$ISO"
-#   VBoxManage storageattach $VM_NAME --storagectl "IDE Controller" --port 1 --device 1 --type dvddrive --medium "$VBOXGUESTADDITIONS_ISO"
 }
 
 _installvm() {
