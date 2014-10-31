@@ -2,7 +2,7 @@
 # Author: Paulo Jerônimo (@paulojeronimo, pj@paulojeronimo.info)
 #
 # Faz o download e verifica o SHA1SUM dos arquivos baixados. Uso:
-# $ bash <(curl -L http://j.mp/vm-fedora-download)
+# $ bash <(curl -sSL http://j.mp/vm-fedora-download)
 
 host=https://googledrive.com/host/0B_tTlCk55SmjZGlNckhCRldUUDQ
 
@@ -23,8 +23,20 @@ then
         Darwin) sha1sum=shasum;;
         Linux) sha1sum=sha1sum;;
     esac
-    $sha1sum -c $f
-    [ $? = 0 ] && { echo -e "\nOk! Download concluído com sucesso!"; exit 0; }
+    if $sha1sum -c $f
+    then
+        echo -e "\nOk! Download concluído com sucesso!"
+
+        echo -e "\nExtraindo a VM ..."
+        if 7za x vm-fedora.7z.001
+        then
+            echo -e "\nOk! Extração concluída com sucesso!"
+            exit
+        else
+            echo -e "\nErro na extração! :( Tente novamente!"
+        fi
+    else
+        echo -e "\nErro no download! :( Tente novamente!"
+    fi 
 fi
-echo -e "\nErro no download! :( Tente novamente!"
 exit 1
